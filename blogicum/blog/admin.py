@@ -6,18 +6,18 @@ from django.contrib.auth.admin import UserAdmin
 from .models import Post, Category, Location
 
 admin.site.empty_value_display = 'Не задано'
-User = get_user_model()
+# User = get_user_model()
 admin.site.unregister(Group)
-admin.site.unregister(User)
+# admin.site.unregister(User)
 
 
-@admin.register(User)
-class CustomAdmin(UserAdmin):
-    list_display = UserAdmin.list_display + ('post_count',)
+# @admin.register(User)
+# class CustomAdmin(UserAdmin):
+#     list_display = UserAdmin.list_display + ('post_count',)
 
-    @admin.display(description='Количество постов')
-    def post_count(self, obj):
-        return obj.posts.count()
+#     @admin.display(description='Количество постов')
+#     def post_count(self, obj):
+#         return obj.posts.count()
 
 
 class PostInline(admin.StackedInline):
