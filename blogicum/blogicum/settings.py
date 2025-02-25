@@ -4,14 +4,25 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = 'django-insecure-z)&%q77c!+d$kk(flwq+k7+t+#w9yol87-e=c-7k4z9#-ncra9'
 
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = [
     'localhost',
     '127.0.0.1',
 ]
 
+
+EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
+
+EMAIL_FILE_PATH = BASE_DIR / 'sent_emails'
+
+LOGIN_URL = 'login'
+
+LOGIN_REDIRECT_URL = 'blog:index'
+
 AUTH_USER_MODEL = 'users.CustomUser'
+
+MEDIA_ROOT = BASE_DIR / 'media'
 
 INSTALLED_APPS = [
     'django.contrib.admin',
