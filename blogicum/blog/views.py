@@ -1,4 +1,4 @@
-from django.shortcuts import render, get_object_or_404, redirect
+from django.shortcuts import get_object_or_404, redirect
 from django.views.generic import (
     ListView, DetailView, CreateView, UpdateView, DeleteView
 )
@@ -76,11 +76,10 @@ class ProfileDetailView(ListView):
     template_name = 'blog/profile.html'
     paginate_by = POSTS_ON_PROFILE_PAGE
 
-
     def get_queryset(self):
         self.profile = get_object_or_404(
             User,
-            username = self.kwargs['username']
+            username=self.kwargs['username']
         )
         user = self.request.user
         if user == self.profile:
