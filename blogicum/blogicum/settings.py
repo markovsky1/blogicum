@@ -11,6 +11,7 @@ ALLOWED_HOSTS = [
     '127.0.0.1',
 ]
 
+CSRF_FAILURE_VIEW = 'pages.views.csrf_failure'
 
 EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
 
@@ -104,8 +105,7 @@ TIME_ZONE = 'UTC'
 
 USE_I18N = True
 
-USE_L10N = False
-
+USE_L10N = True
 USE_TZ = True
 
 STATIC_URL = '/static/'
@@ -116,4 +116,3 @@ STATICFILES_DIRS = [
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-CSRF_FAILURE_VIEW = 'core.views.csrf_failure'

@@ -1,4 +1,4 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import (
     ListView, DetailView, CreateView, UpdateView, DeleteView
 )
@@ -28,15 +28,20 @@ class HomePage(ListView):
     model = Post
     queryset = Post.objects.published().annotate(
         comment_count=Count('comments')
-    )
+    ).order_by('-pub_date')
     template_name = 'blog/index.html'
     paginate_by = POSTS_ON_HOME_PAGE
 
 
 class PostDetailView(DetailView):
     model = Post
-    queryset = Post.objects.published()
     template_name = 'blog/detail.html'
+
+    def get_queryset(self):
+        user = self.request.user
+        if not user.is_authenticated:
+            return Post.objects.published()
+        return Post.objects.published() | Post.objects.filter(author=user)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -71,12 +76,20 @@ class ProfileDetailView(ListView):
     template_name = 'blog/profile.html'
     paginate_by = POSTS_ON_PROFILE_PAGE
 
+
     def get_queryset(self):
         self.profile = get_object_or_404(
             User,
             username = self.kwargs['username']
         )
-        return self.profile.posts.published()
+        user = self.request.user
+        if user == self.profile:
+            return self.profile.posts.all().annotate(
+                comment_count=Count('comments')
+            ).order_by('-pub_date')
+        return self.profile.posts.published().annotate(
+            comment_count=Count('comments')
+        ).order_by('-pub_date')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -116,6 +129,9 @@ class PostUpdateView(OnlyAuthorMixin, UpdateView):
     form_class = PostForm
     template_name = 'blog/create.html'
 
+    def handle_no_permission(self):
+        return redirect('blog:post_detail', pk=self.get_object().pk)
+
     def get_success_url(self):
         return reverse('blog:post_detail', kwargs={'pk': self.object.pk})
 
@@ -154,7 +170,6 @@ class CommentUpdateView(OnlyAuthorMixin, UpdateView):
         return get_object_or_404(Comment, id=self.kwargs['comment_id'])
 
     def get_success_url(self):
-        """Перенаправление на страницу поста после успешного редактирования."""
         return reverse('blog:post_detail', kwargs={'pk': self.object.post.pk})
 
 
