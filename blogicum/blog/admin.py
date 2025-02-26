@@ -1,21 +1,11 @@
 from django.contrib import admin
 from django.contrib.auth.models import Group
+from django.utils.html import format_html
 
-from .models import Post, Category, Location
+from .models import Post, Category, Location, Comment
 
 admin.site.empty_value_display = 'Не задано'
-# User = get_user_model()
 admin.site.unregister(Group)
-# admin.site.unregister(User)
-
-
-# @admin.register(User)
-# class CustomAdmin(UserAdmin):
-#     list_display = UserAdmin.list_display + ('post_count',)
-
-#     @admin.display(description='Количество постов')
-#     def post_count(self, obj):
-#         return obj.posts.count()
 
 
 class PostInline(admin.StackedInline):
@@ -23,16 +13,23 @@ class PostInline(admin.StackedInline):
     extra = 1
 
 
+@admin.register(Comment)
+class CommentAdmin(admin.ModelAdmin):
+    pass
+
+
 @admin.register(Post)
 class PostAdmin(admin.ModelAdmin):
     list_display = (
         'title',
+        'post_image',
         'author',
         'category',
         'location',
+        'comment_count',
         'is_published',
         'pub_date',
-        'created_at'
+        'created_at',
     )
     list_editable = ('is_published',)
     search_fields = ('title', 'text')
@@ -44,6 +41,18 @@ class PostAdmin(admin.ModelAdmin):
         'created_at'
     )
     date_hierarchy = 'pub_date'
+
+    @admin.display(description='Количество комментариев')
+    def comment_count(self, obj):
+        return Comment.objects.filter(post=obj).count()
+
+    @admin.display(description='Изображение')
+    def post_image(self, obj):
+        if obj.image:
+            return format_html(
+                '<img src="{}" width="50" height="50" " />', obj.image.url
+            )
+        return 'Нет изображения'
 
 
 @admin.register(Category)
