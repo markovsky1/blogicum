@@ -33,7 +33,7 @@ class HomePage(ListView):
 class PostDetailView(DetailView):
     model = Post
     template_name = 'blog/detail.html'
-    pk_url_kwarg = 'pk'
+    pk_url_kwarg = 'post_id'
 
     def get_object(self, queryset=None):
         obj = super().get_object(queryset)
@@ -135,13 +135,13 @@ class PostUpdateView(OnlyAuthorMixin, UpdateView):
     model = Post
     form_class = PostForm
     template_name = 'blog/create.html'
-    pk_url_kwarg = 'pk'
+    pk_url_kwarg = 'post_id'
 
     def handle_no_permission(self):
-        return redirect('blog:post_detail', pk=self.get_object().pk)
+        return redirect('blog:post_detail', post_id=self.get_object().pk)
 
     def get_success_url(self):
-        return reverse('blog:post_detail', kwargs={'pk': self.object.pk})
+        return reverse('blog:post_detail', kwargs={'post_id': self.object.pk})
 
 
 class PostDeleteView(OnlyAuthorMixin, DeleteView):
@@ -151,7 +151,7 @@ class PostDeleteView(OnlyAuthorMixin, DeleteView):
 
     def get_object(self, queryset=None):
         """Получение поста по `pk`, а не `pk`."""
-        return get_object_or_404(Post, id=self.kwargs['pk'])
+        return get_object_or_404(Post, id=self.kwargs['post_id'])
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -167,7 +167,7 @@ class CommentCreateView(LoginRequiredMixin, CreateView):
     template_name = 'blog/comment.html'
 
     def dispatch(self, request, *args, **kwargs):
-        self.commenting_post = get_object_or_404(Post, pk=kwargs['pk'])
+        self.commenting_post = get_object_or_404(Post, pk=kwargs['post_id'])
         return super().dispatch(request, *args, **kwargs)
 
     def form_valid(self, form):
@@ -177,7 +177,7 @@ class CommentCreateView(LoginRequiredMixin, CreateView):
 
     def get_success_url(self):
         return reverse(
-            'blog:post_detail', kwargs={'pk': self.kwargs['pk']}
+            'blog:post_detail', kwargs={'post_id': self.kwargs['post_id']}
         )
 
 
@@ -192,7 +192,7 @@ class CommentUpdateView(OnlyAuthorMixin, UpdateView):
 
     def get_success_url(self):
         return reverse(
-            'blog:post_detail', kwargs={'pk': self.object.post.pk}
+            'blog:post_detail', kwargs={'post_id': self.object.post.pk}
         )
 
 
@@ -206,5 +206,5 @@ class CommentDeleteView(OnlyAuthorMixin, DeleteView):
 
     def get_success_url(self):
         return reverse(
-            'blog:post_detail', kwargs={'pk': self.object.post.pk}
+            'blog:post_detail', kwargs={'post_id': self.object.post.pk}
         )
