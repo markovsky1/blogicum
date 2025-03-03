@@ -5,9 +5,6 @@ from blog import views
 app_name = 'blog'
 
 
-"""
-Я поменял <int:post_id> на <int:post_id>, но меня не пустили тесты 😢😢😢
-"""
 post_endpoints = [
     path('create/', views.PostCreateView.as_view(), name='create_post'),
     path(

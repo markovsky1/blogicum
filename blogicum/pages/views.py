@@ -1,15 +1,7 @@
 from django.shortcuts import render
 
 
-def csrf_failure(request, exception=None):
-    """
-    Я поставил вторым аргументом exeption=None, потому что
-    с аргументом reason='' pytest меня не пропускал, вылетала ошибка:
-
-    TypeError: csrf_failure() got an unexpected keyword argument 'exception'
-
-    Я пока что не нашел другого решения.
-    """
+def csrf_failure(request, reason=''):
     return render(request, 'pages/403csrf.html', status=403)
 
 

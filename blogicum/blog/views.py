@@ -150,14 +150,17 @@ class PostDeleteView(OnlyAuthorMixin, DeleteView):
     template_name = 'blog/create.html'
 
     def get_object(self, queryset=None):
-        """Получение поста по `pk`, а не `pk`."""
+        """Получение поста по `post_id`, а не `pk`."""
         return get_object_or_404(Post, id=self.kwargs['post_id'])
 
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        form = PostForm(instance=self.get_object())  # Создаем форму с объектом
-        context['form'] = form  # Передаем форму в контекст
-        return context
+        # context = super().get_context_data(**kwargs)
+        # form = PostForm(instance=self.get_object())
+        # context['form'] = form
+        return dict(
+            super().get_context_data(**kwargs),
+            form=PostForm(instance=self.get_object())
+        )
 
 
 class CommentCreateView(LoginRequiredMixin, CreateView):
