@@ -7,6 +7,8 @@ SECRET_KEY = 'django-insecure-z)&%q77c!+d$kk(flwq+k7+t+#w9yol87-e=c-7k4z9#-ncra9
 DEBUG = True
 
 ALLOWED_HOSTS = [
+    'localhost',
+    '127.0.0.1',
     'www.imarkovsky.pythonanywhere.com',
     'imarkovsky.pythonanywhere.com',
 ]
